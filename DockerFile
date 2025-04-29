@@ -1,0 +1,12 @@
+# Stage 1: Build the application
+FROM maven:3.9.6-eclipse-temurin-21 as builder
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests -X -e
+
+# Stage 2: Run the application
+FROM eclipse-temurin:17-jdk as runner
+WORKDIR /product_service
+COPY --from=builder /app/target/*.jar product_service.jar
+ENTRYPOINT ["java", "-jar", "product_service.jar"]
