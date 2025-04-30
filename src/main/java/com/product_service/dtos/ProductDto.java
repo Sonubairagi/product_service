@@ -1,6 +1,8 @@
 package com.product_service.dtos;
 
-public class ProductDto {
+import java.io.Serializable;
+
+public class ProductDto implements Serializable {
     private String id;
     private String productName;
     private String description;

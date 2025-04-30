@@ -77,5 +77,9 @@ public class ProductController {
         return null;
     }
 
+    @GetMapping("/getProduct/{id}")
+    public ResponseEntity<ProductDto> getProduct(@PathVariable String id) {
+        return new ResponseEntity<>(productService.getProduct(id), HttpStatus.OK);
+    }
 
 }

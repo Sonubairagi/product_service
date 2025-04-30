@@ -1,0 +1,48 @@
+services:
+#  app:
+#    build: .
+#    container_name: product_service-container
+#    environment:
+#      MONGODB_URI: mongodb://sonu_vairagi_mongo:Sonu@7240@mongodb:27017/product_service?authSource=admin
+#    ports:
+#      - "8083:8083"
+#    depends_on:
+#      - mongodb
+#    networks:
+#      - product-service-network
+#    volumes:
+#      - product_service-data:/var/lib/product_service/data
+
+  mongodb:
+    image: mongo
+    container_name: mongo-product-container
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: sonu_vairagi_mongo
+      MONGO_INITDB_ROOT_PASSWORD: Sonu@7240
+    ports:
+      - "27018:27017"
+    networks:
+      - product-service-network
+    volumes:
+      - mongo-data:/var/lib/mongo/data
+    restart: always
+
+  redis:
+    image: redis/redis-stack
+    container_name: redis-product-container
+    ports:
+      - "6380:6379"
+    networks:
+      - product-service-network
+    volumes:
+      - redis-data:/var/lib/redis/data
+    restart: always
+
+networks:
+  product-service-network:
+    driver: bridge
+
+volumes:
+  product_service-data:
+  mongo-data:
+  redis-data:

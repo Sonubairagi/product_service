@@ -11,6 +11,7 @@ import com.product_service.repositories.CategoryRepository;
 import com.product_service.repositories.ProductRepository;
 import com.product_service.util.LoggerUtil;
 import org.slf4j.Logger;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -82,6 +83,22 @@ public class ProductServiceImpl implements ProductService {
             log.error("Error while fetching products with category: {}", e.getMessage());
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    @Cacheable(value = "products", key = "#id")
+    public ProductDto getProduct(String id) {
+
+        ProductDto productDto = null;
+
+        Optional<Product> optionalProduct = productRepository.findById(id);
+
+        if(optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
+            productDto = ProductMapper.mapToProductDto(product);
+        }
+
+        return productDto;
     }
 
 
