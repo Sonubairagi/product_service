@@ -11,5 +11,7 @@ public interface ProductService {
 
     List<ProductWithCategoryDto> findAllProducts();
 
-    ProductDto getProduct(String id);
+    ProductWithCategoryDto getProductById(String productId);
+
+    String deleteProductById(String productId);
 }

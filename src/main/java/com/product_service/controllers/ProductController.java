@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("product/v1/api")
@@ -63,23 +64,47 @@ public class ProductController {
         }
     }
 
+    //http://localhost:8080/product/v1/api/getProductById/{productId}
+    @GetMapping("/getProductById/{productId}")
+    public ResponseEntity<ProductWithCategoryDto> getProductById(
+            @PathVariable("productId") String productId
+    ){
+        ProductWithCategoryDto product = null;
+        try{
+            boolean present = Optional.ofNullable(productId).isPresent();
+            if(present){
+                product = productService.getProductById(productId);
+                log.info("get product details successfully by id : {}",productId);
+                return new ResponseEntity<>(product,HttpStatus.OK);
+            }
+            log.debug("not get the product value by id {}",productId);
+            return new ResponseEntity<>(product,HttpStatus.NOT_FOUND);
+        }catch (Exception e){
+            log.error("Product not getting : {}", e.getMessage());
+            return new ResponseEntity<>(product, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //http://localhost:8080/product/v1/api/deleteProduct/{productId}
     @DeleteMapping("/deleteProduct/{productId}")
     public ResponseEntity<String> deleteProduct(
             @PathVariable("productId") String productId
     ){
+        String productDelete = null;
         try{
-            if(productId != null){
-
+            boolean present = Optional.ofNullable(productId).isPresent();
+            if(present){
+                productDelete = productService.deleteProductById(productId);
+                log.info("delete product details successfully by id : {}",productId);
+                return new ResponseEntity<>(productDelete,HttpStatus.OK);
             }
+            log.debug("not delete the product value by id {}",productId);
+            return new ResponseEntity<>(productDelete,HttpStatus.NOT_FOUND);
         }catch (Exception e){
-
+            log.error("Product not delete : {}", e.getMessage());
+            return new ResponseEntity<>(productDelete, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return null;
     }
 
-    @GetMapping("/getProduct/{id}")
-    public ResponseEntity<ProductDto> getProduct(@PathVariable String id) {
-        return new ResponseEntity<>(productService.getProduct(id), HttpStatus.OK);
-    }
 
 }

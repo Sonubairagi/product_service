@@ -101,5 +101,50 @@ public class ProductServiceImpl implements ProductService {
         return productDto;
     }
 
+    @Override
+    public ProductWithCategoryDto getProductById(String productId) {
+        log.debug("Fetching product with ID: {}", productId);
+
+        try {
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found with ID: " + productId));
+
+            ProductWithCategoryDto dto = new ProductWithCategoryDto();
+            dto.setId(product.getId());
+            dto.setProductName(product.getProductName());
+            dto.setDescription(product.getDescription());
+            dto.setQuantity(product.getQuantity());
+
+            // Fetch and map the category
+            Optional<Category> optionalCategory = categoryRepository.findById(product.getCategoryId());
+            optionalCategory.ifPresent(category -> {
+                CategoryDto categoryDto = CategoryMapper.mapToCategoryDto(category);
+                dto.setCategory(categoryDto);
+            });
+
+            log.info("Successfully fetched product with ID: {}", productId);
+            return dto;
+
+        } catch (Exception e) {
+            log.error("Error fetching product by ID {}: {}", productId, e.getMessage());
+            throw new RuntimeException("Failed to fetch product by ID: " + productId, e);
+        }
+    }
+
+    @Override
+    public String deleteProductById(String productId) {
+        try{
+            boolean present = Optional.ofNullable(productId).isPresent();
+            if(present){
+                productRepository.deleteById(productId);
+                return "Product details delete successfully by id : "+productId;
+            }
+            return null;
+        }catch (Exception e){
+            log.error("Error deleting product by ID {}: {}", productId, e.getMessage());
+            throw new RuntimeException("Failed to delete product by ID: " + productId, e);
+        }
+    }
+
 
 }
