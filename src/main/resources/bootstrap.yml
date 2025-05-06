@@ -1,0 +1,16 @@
+#application name and config file name over config-server
+spring:
+  application:
+    name: product-service
+
+#active profile and config file name suffix over config-server
+  profiles:
+    active: dev
+
+#config-server config
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: CONFIG-SERVER
+      fail-fast: true
